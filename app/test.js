@@ -1,5 +1,5 @@
 // test
 function test() {
   var myVar = 'Hello, World';
-  console.log(myVar);
+  console.log(myvar);
 }

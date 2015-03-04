@@ -11,9 +11,9 @@
   },
   "scripts": {
     "jshint": "jshint -c .jshintrc app",
-    "jscs" : "jscs -c .jscsrc app"
+    "jscs": "jscs -c .jscsrc app"
   },
-  "pre-commit" : [
+  "pre-commit": [
     "jscs",
     "jshint"
   ],
