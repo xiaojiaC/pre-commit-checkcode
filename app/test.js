@@ -1,7 +1,5 @@
 // test
-var _x = 3,
-    y = 5;
-var add = function (x, y) {
-  return x + y;
+function test() {
+  var myVar = 'Hello, World';
+  console.log(myvar);
 }
-add(_x, y);
