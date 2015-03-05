@@ -38,10 +38,9 @@ prompt_info="\n\033[1;41mCOMMIT FAILED\033[0m:\n\
 Some files are invalid. Please fix errors and try committing again."
 
 # JS code check
-echo -e "\033[1;34mjs code check\033[0m:\n$js_files"
-
-# Jscs
+# Jscs and JSHint
 if [ "$js_files" != "" ]; then
+    echo -e "\033[1;34mjs code check\033[0m:\n$js_files"
     for file in ${js_files}; do
         jscs ${file} -c ${jscs_conf}
         if [[ $? -ne 0 ]]; then
@@ -49,10 +48,6 @@ if [ "$js_files" != "" ]; then
             exit 1
         fi
     done
-fi
-
-# JSHint
-if [ "$js_files" != "" ]; then
     for file in ${js_files}; do
         jshint ${file} -c ${jshint_conf}
         if [[ $? -ne 0 ]]; then
@@ -62,12 +57,10 @@ if [ "$js_files" != "" ]; then
     done
 fi
 
-
 # Coffee code check
-echo -e "\033[1;34mcoffee code check\033[0m:\n$coffee_files"
-
-#CoffeeLint
+# CoffeeLint
 if [ "$coffee_files" != "" ]; then
+    echo -e "\033[1;34mcoffee code check\033[0m:\n$coffee_files"
     for file in ${coffee_files}; do
         coffeelint -f ${coffeelint_conf} ${file}
         if [[ $? -ne 0 ]]; then
@@ -77,12 +70,10 @@ if [ "$coffee_files" != "" ]; then
     done
 fi
 
-
 # Scss code check
-echo -e "\033[1;34mscss code check\033[0m:\n$scss_files"
-
 # ScssLint
 if [ "$scss_files" != "" ]; then
+    echo -e "\033[1;34mscss code check\033[0m:\n$scss_files"
     scss-lint -c ${scsslint_conf} ${scss_files}
     if [[ $? -ne 0 ]]; then
         echo -e ${prompt_info}
