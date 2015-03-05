@@ -60,7 +60,7 @@ fi
 # Coffee code check
 # CoffeeLint
 if [ "$coffee_files" != "" ]; then
-    echo -e "\033[1;34mcoffee code check\033[0m:\n$coffee_files"
+    echo -e "\n\033[1;34mcoffee code check\033[0m:\n$coffee_files"
     for file in ${coffee_files}; do
         coffeelint -f ${coffeelint_conf} ${file}
         if [[ $? -ne 0 ]]; then

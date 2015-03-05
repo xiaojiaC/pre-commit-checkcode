@@ -1,6 +1,6 @@
 // test1
 function test() {
-  "use strict";
+  'use strict';
 
   var myVar = 'Hello, World';
 }
