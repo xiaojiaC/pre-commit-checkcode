@@ -1,0 +1,93 @@
+#!/bin/bash
+#
+# Check code style before commit.
+
+# Need to check whether the installation package
+install_pkgs=(jshint jscs coffeelint scss-lint)
+
+for pkg_name in ${install_pkgs[@]}
+do
+    which ${pkg_name} &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo ""
+        echo -e "\033[1;41mERROR\033[0m: ${pkg_name} not found"
+        if [ $pkg_name == 'scss-lint' ]; then
+            echo "INSTALL WITH: sudo gem install scss-lint"
+        else
+            echo "INSTALL WITH: sudo npm install -g ${pkg_name}"
+        fi
+        exit 1
+    fi
+done
+
+# Configuration need to check the file
+check="git diff --cached --name-only --diff-filter=ACMR --"
+js_files=$(${check} src/js/*.js)
+coffee_files=$(${check} src/coffee/*.coffee)
+scss_files=$(${check} src/scss/*.scss)
+
+# Kit json configuration file
+root=$(git rev-parse --show-toplevel)
+jscs_conf="${root}/jscs.json"
+jshint_conf="${root}/jshint.json"
+scsslint_conf="${root}/scsslint.json"
+coffeelint_conf="${root}/coffeelint.json"
+
+# Check failed default prompt information
+prompt_info="\n\033[1;41mCOMMIT FAILED\033[0m:\n\
+Some files are invalid. Please fix errors and try committing again."
+
+# JS code check
+echo -e "js code check:\n$js_files"
+
+# Jscs
+if [ "$js_files" != "" ]; then
+    for file in ${js_files}; do
+        jscs ${file} -c ${jscs_conf}
+        if [[ $? -ne 0 ]]; then
+            echo -e ${prompt_info}
+            exit 1
+        fi
+    done
+fi
+
+# JSHint
+if [ "$js_files" != "" ]; then
+    for file in ${js_files}; do
+        jshint ${file} -c ${jshint_conf}
+        if [[ $? -ne 0 ]]; then
+            echo -e ${prompt_info}
+            exit 1
+        fi
+    done
+fi
+
+
+# Coffee code check
+echo -e "coffee code check:\n$coffee_files"
+
+#CoffeeLint
+if [ "$coffee_files" != "" ]; then
+    for file in ${coffee_files}; do
+        coffeelint -f ${coffeelint_conf} ${file}
+        if [[ $? -ne 0 ]]; then
+            echo -e ${prompt_info}
+            exit 1
+        fi
+    done
+fi
+
+
+# Scss code check
+echo -e "scss code check:\n$scss_files"
+
+# ScssLint
+if [ "$scss_files" != "" ]; then
+    scss-lint -c ${scsslint_conf} ${scss_files}
+    if [[ $? -ne 0 ]]; then
+        echo -e ${prompt_info}
+        exit 1
+    else
+        echo -e "\033[1;32mOK! >>\033[0m check through the scss code style."
+    fi
+fi

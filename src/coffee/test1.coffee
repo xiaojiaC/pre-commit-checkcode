@@ -1,0 +1,4 @@
+class Gangster
+
+    wasItAGoodDay : () ->
+        yes

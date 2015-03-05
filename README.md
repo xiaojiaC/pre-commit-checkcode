@@ -1,1 +1,1 @@
-test code-style by precommit
+check code style by precommit
