@@ -1,3 +1,3 @@
 test ->
   myVar = 'Hello, World'
-  console.log ds
+  console.log dss

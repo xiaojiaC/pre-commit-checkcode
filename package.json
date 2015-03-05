@@ -10,8 +10,8 @@
     "pre-commit": "0.0.9"
   },
   "scripts": {
-    "jshint": "jshint -c .jshintrc app",
-    "jscs": "jscs -c .jscsrc app"
+    "jscs": "jscs -c .jscsrc src",
+    "jshint": "jshint -c .jshintrc src"
   },
   "pre-commit": [
     "jscs",

@@ -38,7 +38,7 @@ prompt_info="\n\033[1;41mCOMMIT FAILED\033[0m:\n\
 Some files are invalid. Please fix errors and try committing again."
 
 # JS code check
-echo -e "js code check:\n$js_files"
+echo -e "\033[1;34mjs code check\033[0m:\n$js_files"
 
 # Jscs
 if [ "$js_files" != "" ]; then
@@ -64,7 +64,7 @@ fi
 
 
 # Coffee code check
-echo -e "coffee code check:\n$coffee_files"
+echo -e "\033[1;34mcoffee code check\033[0m:\n$coffee_files"
 
 #CoffeeLint
 if [ "$coffee_files" != "" ]; then
@@ -79,7 +79,7 @@ fi
 
 
 # Scss code check
-echo -e "scss code check:\n$scss_files"
+echo -e "\033[1;34mscss code check\033[0m:\n$scss_files"
 
 # ScssLint
 if [ "$scss_files" != "" ]; then
