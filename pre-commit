@@ -21,17 +21,18 @@ do
 done
 
 # Configuration need to check the file
-check="git diff --cached --name-only --diff-filter=ACMR --"
-js_files=$(${check} src/js/*.js)
-coffee_files=$(${check} src/coffee/*.coffee)
-scss_files=$(${check} src/scss/*.scss)
+straged="git diff --cached --name-only --diff-filter=ACMR --"
+unstraged="git diff --name-only --diff-filter=ACMR --"
+js_files="*.js"
+coffee_files="*.coffee"
+scss_files="*.scss"
 
 # Kit json configuration file
 root=$(git rev-parse --show-toplevel)
 jscs_conf="${root}/jscs.json"
 jshint_conf="${root}/jshint.json"
-scsslint_conf="${root}/scsslint.json"
 coffeelint_conf="${root}/coffeelint.json"
+scsslint_conf="${root}/scsslint.json"
 
 # Check code default prompt information
 function echoPrompt() {
@@ -46,29 +47,34 @@ Some $2 files are invalid. Please fix errors and try committing again."
 
 # To determine whether these modified files is added
 function isAdded() {
-    for file in $1; do
-        grep ^${file}$ change_file_log
-        if [ $? -ne 0 ]; then
-            echo -e "\033[1;41mERROR\033[0m:\
-Please use \033[1;34m'git add'\033[0m command to increases the modified files and try committing again."
-            exit 1
-        fi
-    done
+    if [ "$1" != "" ]; then
+        for file in $1; do
+            if [[ $2 =~ ${file} ]]; then
+                echo -e "Changes not staged for commit:\n\
+\t(use 'git add <file>...' to update what will be committed)\n\
+\033[31m$1\033[0m"
+                exit 1
+            fi
+        done
+    fi
 }
 
-# JS code check
+##### JS code check #####
 # Jscs and JSHint
 js_pass=true
+straged_js_files=$(${straged} ${js_files})
+unstraged_js_files=$(${unstraged} ${js_files})
 
-if [ "$js_files" != "" ]; then
-    echo -e "\033[1;34mjs code check\033[0m:\n$js_files"
-    for file in ${js_files}; do
+if [ "$straged_js_files" != "" ]; then
+    isAdded "$unstraged_js_files" "$straged_js_files"
+    echo -e "\033[1;34mjs code check\033[0m:\n$straged_js_files"
+    for file in ${straged_js_files}; do
         jscs ${file} -c ${jscs_conf}
         if [[ $? -ne 0 ]]; then
             js_pass=false
         fi
     done
-    for file in ${js_files}; do
+    for file in ${straged_js_files}; do
         jshint ${file} -c ${jshint_conf}
         if [[ $? -ne 0 ]]; then
             js_pass=false
@@ -77,15 +83,16 @@ if [ "$js_files" != "" ]; then
     echoPrompt $js_pass "js"
 fi
 
-# Coffee code check
+##### Coffee code check #####
 # CoffeeLint
 coffee_pass=true
+straged_coffee_files=$(${straged} ${coffee_files})
+unstraged_coffee_files=$(${unstraged} ${coffee_files})
 
-if [ "$coffee_files" != "" ]; then
-    isAdded $coffee_files
-    echo $coffee_files > change_file_log
-    echo -e "\n\033[1;34mcoffee code check\033[0m:\n$coffee_files"
-    for file in ${coffee_files}; do
+if [ "$straged_coffee_files" != "" ]; then
+    isAdded "$unstraged_coffee_files" "$straged_coffee_files"
+    echo -e "\n\033[1;34mcoffee code check\033[0m:\n$straged_coffee_files"
+    for file in ${straged_coffee_files}; do
         coffeelint -f ${coffeelint_conf} ${file}
         if [[ $? -ne 0 ]]; then
             coffee_pass=false
@@ -94,13 +101,16 @@ if [ "$coffee_files" != "" ]; then
     echoPrompt $coffee_pass "coffee"
 fi
 
-# Scss code check
+##### Scss code check #####
 # ScssLint
 scss_pass=true
+straged_scss_files=$(${straged} ${scss_files})
+unstraged_scss_files=$(${unstraged} ${scss_files})
 
-if [ "$scss_files" != "" ]; then
-    echo -e "\n\033[1;34mscss code check\033[0m:\n$scss_files"
-    for file in ${scss_files}; do
+if [ "$straged_scss_files" != "" ]; then
+    isAdded "$unstraged_scss_files" "$straged_scss_files"
+    echo -e "\n\033[1;34mscss code check\033[0m:\n$straged_scss_files"
+    for file in ${straged_scss_files}; do
         scss-lint -c ${scsslint_conf} ${file}
         if [[ $? -ne 0 ]]; then
             scss_pass=false
