@@ -2,5 +2,5 @@
 function test() {
   'use strict';
 
-  var my_var = 'Hello, World';
+  var myVar = 'Hello, World';
 }
