@@ -44,6 +44,18 @@ Some $2 files are invalid. Please fix errors and try committing again."
     fi
 }
 
+# To determine whether these modified files is added
+function isAdded() {
+    for file in $1; do
+        grep ^${file}$ change_file_log
+        if [ $? -ne 0 ]; then
+            echo -e "\033[1;41mERROR\033[0m:\
+Please use \033[1;34m'git add'\033[0m command to increases the modified files and try committing again."
+            exit 1
+        fi
+    done
+}
+
 # JS code check
 # Jscs and JSHint
 js_pass=true
@@ -70,6 +82,8 @@ fi
 coffee_pass=true
 
 if [ "$coffee_files" != "" ]; then
+    isAdded $coffee_files
+    echo $coffee_files > change_file_log
     echo -e "\n\033[1;34mcoffee code check\033[0m:\n$coffee_files"
     for file in ${coffee_files}; do
         coffeelint -f ${coffeelint_conf} ${file}
