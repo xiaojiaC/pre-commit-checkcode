@@ -79,6 +79,6 @@ if [ "$scss_files" != "" ]; then
         echo -e ${prompt_info}
         exit 1
     else
-        echo -e "\033[1;32mOK! >>\033[0m check through the scss code style."
+        echo -e "\033[1;32mOk! >>\033[0m check through the scss code style."
     fi
 fi
