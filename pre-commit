@@ -33,52 +33,65 @@ jshint_conf="${root}/jshint.json"
 scsslint_conf="${root}/scsslint.json"
 coffeelint_conf="${root}/coffeelint.json"
 
-# Check failed default prompt information
-prompt_info="\n\033[1;41mCOMMIT FAILED\033[0m:\n\
-Some files are invalid. Please fix errors and try committing again."
+# Check code default prompt information
+function echoPrompt() {
+    if $1; then
+        echo -e "\033[1;32mOk! >>\033[0m check through the $2 code style."
+        exit 0
+    else
+        echo -e "\n\033[1;41mCOMMIT FAILED\033[0m:\n\
+Some $2 files are invalid. Please fix errors and try committing again."
+        exit 1
+    fi
+}
 
 # JS code check
 # Jscs and JSHint
+js_pass=true
+
 if [ "$js_files" != "" ]; then
     echo -e "\033[1;34mjs code check\033[0m:\n$js_files"
     for file in ${js_files}; do
         jscs ${file} -c ${jscs_conf}
         if [[ $? -ne 0 ]]; then
-            echo -e ${prompt_info}
-            exit 1
+            js_pass=false
         fi
     done
     for file in ${js_files}; do
         jshint ${file} -c ${jshint_conf}
         if [[ $? -ne 0 ]]; then
-            echo -e ${prompt_info}
-            exit 1
+            js_pass=false
         fi
     done
+    echoPrompt $js_pass "js"
 fi
 
 # Coffee code check
 # CoffeeLint
+coffee_pass=true
+
 if [ "$coffee_files" != "" ]; then
     echo -e "\n\033[1;34mcoffee code check\033[0m:\n$coffee_files"
     for file in ${coffee_files}; do
         coffeelint -f ${coffeelint_conf} ${file}
         if [[ $? -ne 0 ]]; then
-            echo -e ${prompt_info}
-            exit 1
+            coffee_pass=false
         fi
     done
+    echoPrompt $coffee_pass "coffee"
 fi
 
 # Scss code check
 # ScssLint
+scss_pass=true
+
 if [ "$scss_files" != "" ]; then
     echo -e "\033[1;34mscss code check\033[0m:\n$scss_files"
-    scss-lint -c ${scsslint_conf} ${scss_files}
-    if [[ $? -ne 0 ]]; then
-        echo -e ${prompt_info}
-        exit 1
-    else
-        echo -e "\033[1;32mOk! >>\033[0m check through the scss code style."
-    fi
+    for file in ${scss_files}; do
+        scss-lint -c ${scsslint_conf} ${file}
+        if [[ $? -ne 0 ]]; then
+            scss_pass=false
+        fi
+    done
+    echoPrompt $scss_pass "scss"
 fi
