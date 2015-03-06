@@ -37,7 +37,6 @@ coffeelint_conf="${root}/coffeelint.json"
 function echoPrompt() {
     if $1; then
         echo -e "\033[1;32mOk! >>\033[0m check through the $2 code style."
-        exit 0
     else
         echo -e "\n\033[1;41mCOMMIT FAILED\033[0m:\n\
 Some $2 files are invalid. Please fix errors and try committing again."
@@ -86,7 +85,7 @@ fi
 scss_pass=true
 
 if [ "$scss_files" != "" ]; then
-    echo -e "\033[1;34mscss code check\033[0m:\n$scss_files"
+    echo -e "\n\033[1;34mscss code check\033[0m:\n$scss_files"
     for file in ${scss_files}; do
         scss-lint -c ${scsslint_conf} ${file}
         if [[ $? -ne 0 ]]; then
@@ -94,4 +93,8 @@ if [ "$scss_files" != "" ]; then
         fi
     done
     echoPrompt $scss_pass "scss"
+fi
+
+if [ $js_pass -a $coffee_pass -a $scss_pass ]; then
+    exit 0
 fi
